@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6", // 🎯 Define a qué versión de JavaScript se compilará
+    "module": "commonjs", // 🧩 Módulo utilizado para la importación/exportación
+    "strict": true, // ⚠️ Activa todas las verificaciones de tipo estrictas
+    "esModuleInterop": true, // ✅ Mejora la interoperabilidad con los módulos ES
+    "outDir": "./dist", // 📂 Directorio de salida para los archivos compilados
+    "rootDir": "./src" // 📂 Directorio raíz de los archivos fuente
+  },
+  "include": ["src"], // 📚 Carpeta que contiene los archivos TypeScript
+  "exclude": ["node_modules"] // 🚫 Excluye archivos innecesarios
+}
