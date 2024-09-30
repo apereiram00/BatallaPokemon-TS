@@ -12,7 +12,7 @@ export class Pokemon{
     public defensa: number;
     public movimientos: Move[];
     public tipo: Type;
-    public puedeCurarse: boolean = false;
+    public puedeCurarse: boolean = true;
 
     constructor(nombre: string, hpActual: number, hpMax: number, ataque: number, defensa: number, movimientos: Move[], puedeCurarse: boolean, tipo: Type){
         this.nombre = nombre;
@@ -25,23 +25,21 @@ export class Pokemon{
         this.tipo = tipo;
     }
 
-    public attack(ia: Pokemon, movimientos: Move): void {
+    public attack(pokemon: Pokemon, movimientos: Move): void {
         let ataqueTotal = this.ataque + movimientos.dañoBaseMovimiento;
-        let daño = Math.floor((ataqueTotal - ia.defensa) > 0 ? ataqueTotal - ia.defensa : 1);
-        console.log(`${this.nombre} usó ${movimientos.nombreMovimiento} y causó ${daño} puntos de daño a ${ia.nombre}`);
-        ia.hpActual = Math.max(ia.hpActual - daño, 0); 
-        if (ia.hpActual === 0) {
-            console.log(`${this.nombre} muere.`);
-        }
+        let daño = Math.max(ataqueTotal - pokemon.defensa, 0);
+        console.log(`${this.nombre} usa ${movimientos.nombreMovimiento} y causa ${daño} puntos de daño a ${pokemon.nombre}`);
+        pokemon.hpActual = Math.max(pokemon.hpActual - daño, 0); 
     }
+    
 
     public heal(): void {
         if(!this.puedeCurarse){
             let curacion = Math.floor(this.hpMax * 0.5);
             this.hpActual = Math.min(this.hpActual + curacion, this.hpMax);
             console.log(`${this.nombre} se cura ${curacion} HP. Tiene ${this.hpActual} HP`);
-            this.puedeCurarse = true;
-        } else {
+            this.puedeCurarse = false;
+        }else{
             console.log(`${this.nombre} ya se ha curado. No puede curarse de nuevo.`);
         }
     }

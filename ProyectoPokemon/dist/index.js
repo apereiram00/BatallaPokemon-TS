@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Pokemon_1 = require("./Pokemon");
 const Move_1 = require("./Move");
@@ -43,7 +52,7 @@ let rayoSolar = new Move_1.Move("RayoSolar", 120);
 let drenadoras = new Move_1.Move("Drenadoras", 30);
 let movimientosBulbasaur = [hojaAfilada, latigazo, rayoSolar, drenadoras];
 let impactrueno = new Move_1.Move("Impactrueno", 40);
-let rayo = new Move_1.Move("rayo", 90);
+let rayo = new Move_1.Move("Rayo", 90);
 let chispazo = new Move_1.Move("Chispazo", 65);
 let trueno = new Move_1.Move("Trueno", 110);
 let movimientosPikachu = [impactrueno, rayo, chispazo, trueno];
@@ -51,74 +60,76 @@ let placaje = new Move_1.Move("Placaje", 40);
 let golpeCuerpo = new Move_1.Move("GolpeCuerpo", 85);
 let cabezazo = new Move_1.Move("Cabezazo", 70);
 let movimientosMeowth = [placaje, golpeCuerpo, cabezazo];
-let charmander = new Pokemon_1.Pokemon("Charmander", 100, // HPactual
-100, // HPmax
-52, // Ataque
-43, // Defensa
-movimientosCharmander, false, // Curacion off
-Type_1.Type.Fuego);
-let squirtle = new Pokemon_1.Pokemon("Squirtle", 90, // HPactual
-90, // HPmax
-48, // Ataque
-65, // Defensa
-movimientosSquirtle, false, // Curacion off
-Type_1.Type.Fuego);
-let bulbasaur = new Pokemon_1.Pokemon("Bulbasaur", 100, // HPActual
-100, // HPmax
-49, // Ataque
-49, // Defensa
-movimientosBulbasaur, false, // Curacion off 
-Type_1.Type.Planta);
-let pikachu = new Pokemon_1.Pokemon("Pikachu", 70, // HPActual
-70, // HPmax
-55, // Ataque
-40, // Defensa
-movimientosPikachu, false, // Curacion off 
-Type_1.Type.Eléctrico);
-let meowth = new Pokemon_1.Pokemon("Meowth", 80, // HPActual
-80, // HPmax
-45, // Ataque
-35, // Defensa
-movimientosMeowth, false, // Curacion off 
-Type_1.Type.Normal);
-let listaPokemons = [];
-listaPokemons.push(charmander, squirtle, bulbasaur, pikachu, meowth);
-let eleccionPokemon = listaPokemons[Math.floor(Math.random() * listaPokemons.length)];
-batallaPokemon(eleccionPokemon, eleccionPokemon);
+let charmander = new Pokemon_1.Pokemon("Charmander", 100, 100, 52, 43, movimientosCharmander, false, Type_1.Type.Fuego);
+let squirtle = new Pokemon_1.Pokemon("Squirtle", 90, 90, 48, 65, movimientosSquirtle, false, Type_1.Type.Agua);
+let bulbasaur = new Pokemon_1.Pokemon("Bulbasaur", 100, 100, 49, 49, movimientosBulbasaur, false, Type_1.Type.Planta);
+let pikachu = new Pokemon_1.Pokemon("Pikachu", 70, 70, 55, 40, movimientosPikachu, false, Type_1.Type.Eléctrico);
+let meowth = new Pokemon_1.Pokemon("Meowth", 80, 80, 45, 35, movimientosMeowth, false, Type_1.Type.Normal);
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+let listaPokemons = [charmander, squirtle, bulbasaur, pikachu, meowth];
+let jugador = listaPokemons[Math.floor(Math.random() * listaPokemons.length)];
+let ia = listaPokemons[Math.floor(Math.random() * listaPokemons.length)];
+batallaPokemon(jugador, ia);
 function batallaPokemon(jugador, ia) {
-    let turno = 1;
-    while (jugador.hpActual > 0 && ia.hpActual > 0) {
-        console.log(`\n--- Turno ${turno} ---`);
-        console.log(`${jugador.nombre}: ${jugador.hpActual}/${jugador.hpMax} HP`);
-        console.log(`${ia.nombre}: ${ia.hpActual}/${ia.hpMax} HP`);
-        let accionJugador = readlineSync.question("Que accion desea realizar? (1) Atacar (2) Curarse: ");
-        if (accionJugador === "1") {
-            console.log("Movimientos disponibles:");
-            jugador.movimientos.forEach((move, i) => console.log(`${i + 1}: ${move.nombreMovimiento}`));
-            let listaMovimiento = readlineSync.questionInt("Elige un movimiento: ") - 1;
-            let movimientoElegido = jugador.movimientos[listaMovimiento];
-            jugador.attack(ia, movimientoElegido);
+    return __awaiter(this, void 0, void 0, function* () {
+        let turno = 1;
+        let curacionUsada = false;
+        let muerto = false;
+        let accionJugador;
+        while (jugador.hpActual > 0 && !muerto) {
+            console.log(`\n--- Turno ${turno} ---`);
+            console.log(`${jugador.nombre}(jugador): ${jugador.hpActual}/${jugador.hpMax} HP`);
+            console.log(`${ia.nombre}(IA): ${ia.hpActual}/${ia.hpMax} HP`);
+            yield delay(2000);
+            do {
+                accionJugador = readlineSync.question("Elige una opcion (1) Atacar (2) Curarse: ");
+                if (accionJugador !== "1" && accionJugador !== "2") {
+                    console.log("Opcion no valida. Elige (1) Atacar o (2) Curarse.");
+                }
+                else if (accionJugador === "2" && (turno === 1 || curacionUsada)) {
+                    console.log("No puedes curarte en el primer turno o ya te has curado.");
+                    accionJugador = "";
+                }
+            } while (accionJugador !== "1" && accionJugador !== "2");
+            if (accionJugador === "1") {
+                console.log("Lista de movimientos:");
+                jugador.movimientos.forEach((move, i) => console.log(`${i + 1}: ${move.nombreMovimiento}`));
+                let listaMovimiento = readlineSync.questionInt("Elige un movimiento: ") - 1;
+                let movimientoElegido = jugador.movimientos[listaMovimiento];
+                jugador.attack(ia, movimientoElegido);
+            }
+            else if (accionJugador === "2") {
+                jugador.heal();
+                curacionUsada = true;
+            }
+            if (ia.hpActual <= 0) {
+                console.log(`${ia.nombre} ha sido derrotado. ${jugador.nombre} gana.`);
+                muerto = true;
+            }
+            else {
+                yield delay(2000);
+                let accionIA;
+                if (turno === 1 || curacionUsada || Math.random() < 0.5) {
+                    accionIA = "atacar";
+                }
+                else {
+                    accionIA = "curarse";
+                }
+                if (accionIA === "atacar") {
+                    let movimientoIA = ia.movimientos[Math.floor(Math.random() * ia.movimientos.length)];
+                    console.log(`${ia.nombre} elige atacar con ${movimientoIA.nombreMovimiento}`);
+                    ia.attack(jugador, movimientoIA);
+                }
+                else if (accionIA === "curarse") {
+                    ia.heal();
+                    curacionUsada = true;
+                }
+                if (jugador.hpActual <= 0) {
+                    console.log(`${jugador.nombre} ha sido derrotado. ${ia.nombre} gana.`);
+                    muerto = true;
+                }
+            }
+            turno++;
         }
-        else if (accionJugador === "2") {
-            jugador.heal();
-        }
-        if (ia.hpActual === 0) {
-            console.log(`${ia.nombre} muere. ${jugador.nombre} gana`);
-        }
-        let accionesIA = ["atacar", "curarse"];
-        let accionIA = accionesIA[Math.floor(Math.random() * accionesIA.length)];
-        if (accionIA === "atacar") {
-            let movimientoIA = ia.movimientos[Math.floor(Math.random() * ia.movimientos.length)];
-            console.log(`${ia.nombre} elige atacar con ${movimientoIA.nombreMovimiento}`);
-            ia.attack(jugador, movimientoIA);
-        }
-        else if (accionIA === "curarse") {
-            ia.heal();
-            console.log(`${ia.nombre} se cura.`);
-        }
-        if (jugador.hpActual === 0) {
-            console.log(`${jugador.nombre} muere. ${ia.nombre} gana`);
-        }
-        turno++;
-    }
+    });
 }
